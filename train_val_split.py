@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 import sklearn.model_selection
+import os
+
+os.chdir("../")
 
 """THIS SCRIPT IS USED TO GET A RANDOM TRAIN VALIDATION SPLIT OF THE DATA"""
 
@@ -49,3 +52,20 @@ with open("./data-competition-1a/val_x2.npy", mode="wb") as file:
     np.save(file, val_x2)
 with open("./data-competition-1a/val_y2.npy", mode="wb") as file:
     np.save(file, val_y2)
+
+
+# load test datasets
+test_1 = pd.read_csv("./data-competition-1a/1a_1_test.csv")
+test_2 = pd.read_csv("./data-competition-1a/1a_2_test.csv")
+
+# convert test datasets to numpy
+test_1 = test_1.to_numpy()[:, [1, 2]]
+test_2 = test_2.to_numpy()[:, [1, 2]]
+
+# save the test datasets as .npy
+with open("./data-competition-1a/test_1.npy", mode="wb") as file:
+    np.save(file, test_1)
+with open("./data-competition-1a/test_2.npy", mode="wb") as file:
+    np.save(file, test_2)
+
+
