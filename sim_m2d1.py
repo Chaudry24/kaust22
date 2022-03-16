@@ -5,11 +5,11 @@ import models
 
 def load_data():
     # load train/val data
-    with open("../data-competition-1a/train_x1.npy", mode="rb") as file:
+    with open("./data-competition-1a/train_x1.npy", mode="rb") as file:
         train_x = np.load(file)
-    with open("../data-competition-1a/train_y1.npy", mode="rb") as file:
+    with open("./data-competition-1a/train_y1.npy", mode="rb") as file:
         train_y = np.load(file)
-    with open("../data-competition-1a/test_1.npy", mode="rb") as file:
+    with open("./data-competition-1a/test_1.npy", mode="rb") as file:
         test = np.load(file)
 
     # make a tuple for train/val data
