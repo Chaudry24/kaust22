@@ -27,9 +27,9 @@ def model1(dense_units=1024, lr=1e-3, n_layers=5):
     model = tf.keras.Sequential(l)
 
     # compile model
-    model.compile(loss=rmse_loss,
+    model.compile(loss=tf.keras.losses.MeanSquaredError(),
                   optimizer=tf.keras.optimizers.Nadam(learning_rate=lr),
-                  metrics=[tf.keras.metrics.MeanSquaredError(),
+                  metrics=[tf.keras.metrics.RootMeanSquaredError(),
                            tf.keras.metrics.MeanAbsoluteError()])
 
     return model
@@ -64,9 +64,9 @@ def model2(dense_units=1024, lr=1e-3):
     model = tf.keras.Model(inputs, output)
 
     # compile model
-    model.compile(loss=rmse_loss,
+    model.compile(loss=tf.keras.losses.MeanSquaredError(),
                   optimizer=tf.keras.optimizers.Nadam(learning_rate=lr),
-                  metrics=[tf.keras.metrics.MeanSquaredError(),
+                  metrics=[tf.keras.metrics.RootMeanSquaredError(),
                            tf.keras.metrics.MeanAbsoluteError()])
 
     return model

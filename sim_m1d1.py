@@ -17,7 +17,7 @@ def load_data():
 
 
 # get the best model
-model = models.model2(lr=1e-6)
+model = models.model1(lr=1e-6)
 
 # get the data
 (train_x, train_y), test = load_data()
@@ -34,7 +34,7 @@ model.fit(x=train_x, y=train_y, epochs=1000)
 preds = model.predict(x=test)
 
 # save the model predictions as .npy
-with open("./results/preds_m2d1.npy", mode="wb") as file:
+with open("./results/preds_m1d1.npy", mode="wb") as file:
     np.save(file, preds)
 
 # open validation data to get validation error
@@ -47,6 +47,6 @@ with open("./data-competition-1a/val_y1.npy", mode="rb") as file:
 val_results = np.array(model.evaluate(x=val_x, y=val_y))
 
 # save the above result
-with open("./results/val_m2d1.npy", mode="wb") as file:
+with open("./results/val_m1d1.npy", mode="wb") as file:
     np.save(file, preds)
 
