@@ -145,8 +145,8 @@ problem.search_space(ResNetMLPSpace)
 # Fixed hyperparameters for all trained models
 problem.hyperparameters(
     batch_size=32,
-    learning_rate=0.00001,
-    optimizer="adam",
+    learning_rate=0.000001,
+    optimizer="nadam",
     num_epochs=1000,
     callbacks=dict(
         EarlyStopping=dict(
