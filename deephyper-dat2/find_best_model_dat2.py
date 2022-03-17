@@ -57,7 +57,7 @@ ACTIVATIONS = [
 
 class ResNetMLPSpace(KSearchSpace):
 
-    def __init__(self, input_shape, output_shape, seed=None, num_layers=10, mode="regression"):
+    def __init__(self, input_shape, output_shape, seed=None, num_layers=7, mode="regression"):
         super().__init__(input_shape, output_shape, seed=seed)
 
         self.num_layers = num_layers
@@ -190,8 +190,8 @@ print("Number of workers: ", evaluator.num_workers)
 
 search = Random(problem, evaluator)
 
-# find 20 best models
-results = search.search(20)
+# find 500 best models
+results = search.search(500)
 
 # define space and shapes variable
 shapes = dict(input_shape=(2,), output_shape=(1,))
