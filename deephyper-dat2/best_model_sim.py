@@ -46,6 +46,6 @@ with open("../data-competition-1a/val_y2.npy", mode="rb") as file:
 val_results = np.array(model.evaluate(x=val_x, y=val_y))
 
 # save the above result
-with open("./results/val_d2.npy", mode="wb") as file:
+with open("./best_model_results/val_d2.npy", mode="wb") as file:
     np.save(file, preds)
 
