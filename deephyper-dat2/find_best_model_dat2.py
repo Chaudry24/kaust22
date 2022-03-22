@@ -7,6 +7,7 @@ from deephyper.nas.node import ConstantNode, VariableNode
 from deephyper.nas.operation import operation, Zero, Connect, AddByProjecting, Identity
 from deephyper.problem import NaProblem
 from deephyper.nas.preprocessing import minmaxstdscaler
+from deephyper.nas.preprocessing import stdscaler
 import multiprocessing
 from deephyper.evaluator import Evaluator
 from deephyper.evaluator.callback import LoggerCallback
@@ -41,23 +42,23 @@ Add = operation(tf.keras.layers.Add)
 # Flatten = operation(tf.keras.layers.Flatten)
 
 ACTIVATIONS = [
-    tf.keras.activations.elu,
-    tf.keras.activations.gelu,
-    tf.keras.activations.hard_sigmoid,
+    # tf.keras.activations.elu,
+    # tf.keras.activations.gelu,
+    # tf.keras.activations.hard_sigmoid,
     tf.keras.activations.linear,
     tf.keras.activations.relu,
-    tf.keras.activations.selu,
-    tf.keras.activations.sigmoid,
-    tf.keras.activations.softplus,
-    tf.keras.activations.softsign,
-    tf.keras.activations.swish,
-    tf.keras.activations.tanh,
+    # tf.keras.activations.selu,
+    # tf.keras.activations.sigmoid,
+    # tf.keras.activations.softplus,
+    # tf.keras.activations.softsign,
+    # tf.keras.activations.swish,
+    # tf.keras.activations.tanh,
 ]
 
 
 class ResNetMLPSpace(KSearchSpace):
 
-    def __init__(self, input_shape, output_shape, seed=None, num_layers=7, mode="regression"):
+    def __init__(self, input_shape, output_shape, seed=None, num_layers=5, mode="regression"):
         super().__init__(input_shape, output_shape, seed=seed)
 
         self.num_layers = num_layers
@@ -85,8 +86,8 @@ class ResNetMLPSpace(KSearchSpace):
     def build_sub_graph(self, input_, num_layers=3):
         source = prev_input = input_
 
-        # look over skip connections within a range of the 4 previous nodes
-        anchor_points = collections.deque([source], maxlen=4)
+        # look over skip connections within a range of the 3 previous nodes
+        anchor_points = collections.deque([source], maxlen=3)
 
         for _ in range(self.num_layers):
             dense = VariableNode()
@@ -122,9 +123,9 @@ class ResNetMLPSpace(KSearchSpace):
                 node.add_op(Dense(units=units, activation=activation))
 
     def add_dropout_to_(self, node):
-        a, b = 1e-3, 0.4
+        a, b = 1e-3, 0.1
         node.add_op(Identity())
-        dropout_range = np.exp(np.linspace(np.log(a), np.log(b), 10))  # ! NAS
+        dropout_range = np.exp(np.random.uniform(np.log(a), np.log(b), 10))  # ! NAS
         for rate in dropout_range:
             node.add_op(Dropout(rate))
 
@@ -137,7 +138,8 @@ problem.load_data(load_data)
 
 # The function passed to preprocessing has to return
 # a scikit-learn like preprocessor.
-problem.preprocessing(minmaxstdscaler)
+# problem.preprocessing(minmaxstdscaler)
+problem.preprocessing(stdscaler)
 
 # Link the defined search space
 problem.search_space(ResNetMLPSpace)
@@ -145,8 +147,8 @@ problem.search_space(ResNetMLPSpace)
 # Fixed hyperparameters for all trained models
 problem.hyperparameters(
     batch_size=32,
-    learning_rate=0.000001,
-    optimizer="nadam",
+    learning_rate=1e-6,
+    optimizer="adam",
     num_epochs=1000,
     callbacks=dict(
         EarlyStopping=dict(
@@ -164,7 +166,8 @@ problem.metrics(["rmse"])
 
 # Define the maximised objective
 # problem.objective("val_r2__last")
-problem.objective("val_loss")
+# problem.objective("val_loss")
+problem.objective("val_acc")
 
 # print the problem
 problem
