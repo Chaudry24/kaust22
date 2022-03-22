@@ -48,5 +48,5 @@ val_results = np.array(model.evaluate(x=val_x, y=val_y))
 
 # save the above result
 with open("./results/val_m1d1.npy", mode="wb") as file:
-    np.save(file, preds)
+    np.save(file, val_results)
 
