@@ -28,9 +28,8 @@ def model1(dense_units=1024, lr=1e-3, n_layers=5):
 
     # compile model
     model.compile(loss=tf.keras.losses.MeanSquaredError(),
-                  optimizer=tf.keras.optimizers.Nadam(learning_rate=lr),
-                  metrics=[tf.keras.metrics.RootMeanSquaredError(),
-                           tf.keras.metrics.MeanAbsoluteError()])
+                  optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+                  metrics=[tf.keras.metrics.RootMeanSquaredError()])
 
     return model
 
@@ -65,9 +64,8 @@ def model2(dense_units=1024, lr=1e-3):
 
     # compile model
     model.compile(loss=tf.keras.losses.MeanSquaredError(),
-                  optimizer=tf.keras.optimizers.Nadam(learning_rate=lr),
-                  metrics=[tf.keras.metrics.RootMeanSquaredError(),
-                           tf.keras.metrics.MeanAbsoluteError()])
+                  optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+                  metrics=[tf.keras.metrics.RootMeanSquaredError()])
 
     return model
 
