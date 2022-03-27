@@ -193,8 +193,8 @@ print("Number of workers: ", evaluator.num_workers)
 
 search = Random(problem, evaluator)
 
-# find 20 best models
-results = search.search(20)
+# find 200 best models
+results = search.search(200)
 
 # define space and shapes variable
 shapes = dict(input_shape=(2,), output_shape=(1,))
