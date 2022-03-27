@@ -45,7 +45,7 @@ ACTIVATIONS = [
     # tf.keras.activations.elu,
     # tf.keras.activations.gelu,
     # tf.keras.activations.hard_sigmoid,
-    tf.keras.activations.linear,
+    # tf.keras.activations.linear,
     tf.keras.activations.relu,
     # tf.keras.activations.selu,
     # tf.keras.activations.sigmoid,
@@ -167,7 +167,7 @@ problem.metrics(["rmse"])
 # Define the maximised objective
 # problem.objective("val_r2__last")
 # problem.objective("val_loss")
-problem.objective("val_acc")
+problem.objective("val_loss__min")
 
 # print the problem
 problem
@@ -193,8 +193,8 @@ print("Number of workers: ", evaluator.num_workers)
 
 search = Random(problem, evaluator)
 
-# find 500 best models
-results = search.search(500)
+# find 20 best models
+results = search.search(20)
 
 # define space and shapes variable
 shapes = dict(input_shape=(2,), output_shape=(1,))
