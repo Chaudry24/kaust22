@@ -530,7 +530,7 @@ def model16(dense_units=1024, lr=1e-3):
     return model
 
 
-def model17(dense_units=1024, lr=1e-3):
+def model17(dense_units=2056, lr=1e-3):
     """This function returns a compiled NN with skip connections"""
 
     # input layer
