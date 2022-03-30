@@ -441,7 +441,7 @@ def model14(dense_units=1024, lr=1e-3):
     # concatenate d3 with d4 to pass into d5
     c34 = tf.keras.layers.Concatenate()([d3, d4])
     d5 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c34)
-    d5 = tf.keras.layers.Dropout(0.05)(d5)
+    d5 = tf.keras.layers.Dropout(0.10)(d5)
 
     # pass d5 into output
     output = tf.keras.layers.Dense(units=1)(d5)
@@ -482,7 +482,7 @@ def model15(dense_units=1024, lr=1e-3):
     # concatenate inputs with d5 and pass into output
     cind5 = tf.keras.layers.Concatenate()([inputs, d5])
     d6 = tf.keras.layers.Dense(units=dense_units, activation="relu")(cind5)
-    d6 = tf.keras.layers.Dropout(0.05)(d6)
+    d6 = tf.keras.layers.Dropout(0.10)(d6)
 
     # pass d5 into output
     output = tf.keras.layers.Dense(units=1)(d6)
