@@ -530,7 +530,7 @@ def model16(dense_units=1024, lr=1e-3):
     return model
 
 
-def model17(dense_units=2056, lr=1e-3):
+def model17(dense_units=1024, lr=1e-3):
     """This function returns a compiled NN with skip connections"""
 
     # input layer
@@ -547,6 +547,7 @@ def model17(dense_units=2056, lr=1e-3):
     # concatenate output of d2 with d3 to pass into d4
     c23 = tf.keras.layers.Concatenate()([d2, d3])
     d4 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c23)
+    d4 = tf.keras.layers.Dropout(0.05)(d4)
 
     # concatenate d3 with d4 to pass into d5
     c34 = tf.keras.layers.Concatenate()([d3, d4])
