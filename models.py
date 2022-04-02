@@ -700,3 +700,54 @@ def model20(dense_units=1024, lr=1e-3):
                   metrics=[tf.keras.metrics.RootMeanSquaredError()])
 
     return model
+
+
+def model21(dense_units=1024, lr=1e-3):
+    """This function returns a compiled NN with skip connections"""
+
+    # input layer
+    inputs = tf.keras.layers.Input(shape=(2))
+
+    # dense layers
+    d1 = tf.keras.layers.Dense(units=dense_units, activation="relu")(inputs)
+    d2 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d1)
+
+    # concat output of d1 with d2 to pass into d3
+    c12 = tf.keras.layers.Concatenate()([d1, d2])
+    d3 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c12)
+
+    # concatenate output of d2 with d3 to pass into d4
+    c23 = tf.keras.layers.Concatenate()([d2, d3])
+    d4 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c23)
+
+    # concatenate d3 with d4 to pass into d5
+    c34 = tf.keras.layers.Concatenate()([d3, d4])
+    d5 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c34)
+    d5_drp = tf.keras.layers.Dropout(0.05)(d5)
+
+    # concatenate inputs with d5 and pass into d6
+    cind5 = tf.keras.layers.Concatenate()([inputs, d5])
+    d6 = tf.keras.layers.Dense(units=dense_units, activation="relu")(cind5)
+    d6_drp = tf.keras.layers.Dropout(0.05)(d6)
+
+    cd5_drpd6 = tf.keras.layers.Concatenate()([d5_drp, d6])
+    d7 = tf.keras.layers.Dense(units=dense_units, activation="relu")(cd5_drpd6)
+
+    cd6_drpd7 = tf.keras.layers.Concatenate()([d6_drp, d7])
+    d8 = tf.keras.layers.Dense(units=dense_units, activation="relu")(cd6_drpd7)
+    d8 = tf.keras.layers.Dropout(0.05)(d8)
+
+    # pass into output
+    output = tf.keras.layers.Dense(units=1)(d8)
+
+    # connect the inputs and outputs
+    model = tf.keras.Model(inputs, output)
+
+    # compile model
+    model.compile(loss=tf.keras.losses.MeanSquaredError(),
+                  optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+                  metrics=[tf.keras.metrics.RootMeanSquaredError()])
+
+    return model
+
+
