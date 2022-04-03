@@ -1,4 +1,5 @@
 import tensorflow as tf
+import tensorflow_probability as tfp
 
 
 def rmse_loss(y_pred, y_true):
@@ -751,3 +752,176 @@ def model21(dense_units=1024, lr=1e-3):
     return model
 
 
+def model22(y_true, dense_units=1024, lr=1e-3):
+    """This function returns a compiled LSGAN"""
+
+    def generator():
+        """This function returns the generator model"""
+
+        # input layer
+        inputs = tf.keras.layers.Input(shape=(2))
+
+        # dense layers
+        d1 = tf.keras.layers.Dense(units=dense_units, activation="relu")(inputs)
+        d2 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d1)
+
+        # concat output of d1 with d2 to pass into d3
+        c12 = tf.keras.layers.Concatenate()([d1, d2])
+        d3 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c12)
+
+        # concatenate output of d2 with d3 to pass into d4
+        c23 = tf.keras.layers.Concatenate()([d2, d3])
+        d4 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c23)
+
+        # concatenate d3 with d4 to pass into d5
+        c34 = tf.keras.layers.Concatenate()([d3, d4])
+        d5 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c34)
+        d5 = tf.keras.layers.Dropout(0.05)(d5)
+
+        # concatenate inputs with d5 and pass into output
+        cind5 = tf.keras.layers.Concatenate()([inputs, d5])
+        d6 = tf.keras.layers.Dense(units=dense_units, activation="relu")(cind5)
+        d6 = tf.keras.layers.Dropout(0.05)(d6)
+        d7 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d6)
+        d7 = tf.keras.layers.Dropout(0.05)(d7)
+
+        # pass into output
+        output = tf.keras.layers.Dense(units=1)(d7)
+
+        # connect the inputs and outputs
+        model = tf.keras.Model(inputs, output)
+
+        return model
+
+    def discriminator():
+        """This function returns the discriminator model"""
+
+        # input layer
+        inputs = tf.keras.layers.Input(shape=(1))
+
+        # dense layers
+        d1 = tf.keras.layers.Dense(units=dense_units, activation="relu")(inputs)
+        d2 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d1)
+
+        # concat output of d1 with d2 to pass into d3
+        c12 = tf.keras.layers.Concatenate()([d1, d2])
+        d3 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c12)
+
+        # concatenate output of d2 with d3 to pass into d4
+        c23 = tf.keras.layers.Concatenate()([d2, d3])
+        d4 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c23)
+
+        # concatenate d3 with d4 to pass into d5
+        c34 = tf.keras.layers.Concatenate()([d3, d4])
+        d5 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c34)
+
+        # concatenate inputs with d5 and pass into output
+        cind5 = tf.keras.layers.Concatenate()([inputs, d5])
+        d6 = tf.keras.layers.Dense(units=dense_units, activation="relu")(cind5)
+        d6 = tf.keras.layers.Dropout(0.10)(d6)
+
+        # pass d5 into output
+        output = tf.keras.layers.Dense(units=1)(d6)
+
+        # connect the inputs and outputs
+        model = tf.keras.Model(inputs, output)
+
+        # compile model
+        model.compile(loss=tf.keras.losses.MeanSquaredError(),
+                      optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+                      metrics=[tf.keras.metrics.RootMeanSquaredError()])
+
+        return model
+
+    gen = generator()
+    dis = discriminator()
+
+    # train the discriminator
+    for i in range(1000):
+        print("discriminator training started")
+        x = tf.random.normal((y_true.shape[0], y_true.shape[1]))
+        y_true = tf.convert_to_tensor(y_true)
+        dis.fit(x, y_true, epochs=1, verbose=0)
+
+    print("discriminator training ended")
+
+    # hold the discriminator layers
+    for layer in dis.layers:
+        layer.trainable = False
+
+    gan = tf.keras.Sequential(
+        [gen, dis]
+    )
+
+    gan.compile(loss="mse", optimizer=tf.keras.optimizers.Adam(learning_rate=lr))
+
+    return gan
+
+
+def model23(dense_units=1024, lr=1e-3):
+
+    """This function returns the encoder model"""
+
+    # input layer
+    inputs = tf.keras.layers.Input(shape=(2))
+
+    # dense layers
+    d1 = tf.keras.layers.Dense(units=dense_units, activation="relu")(inputs)
+    d2 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d1)
+
+    # concat output of d1 with d2 to pass into d3
+    c12 = tf.keras.layers.Concatenate()([d1, d2])
+    d3 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c12)
+
+    # concatenate output of d2 with d3 to pass into d4
+    c23 = tf.keras.layers.Concatenate()([d2, d3])
+    d4 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c23)
+
+    # concatenate d3 with d4 to pass into d5
+    c34 = tf.keras.layers.Concatenate()([d3, d4])
+    d5 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c34)
+    d5 = tf.keras.layers.Dropout(0.05)(d5)
+
+    # concatenate inputs with d5 and pass into output
+    cind5 = tf.keras.layers.Concatenate()([inputs, d5])
+    d6 = tf.keras.layers.Dense(units=dense_units, activation="relu")(cind5)
+    d6 = tf.keras.layers.Dropout(0.05)(d6)
+    d7 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d6)
+    d7 = tf.keras.layers.Dropout(0.05)(d7)
+
+    # pass into output
+    enc_layer = tfp.layers.DenseReparameterization(units=1)(d7)
+
+    # dec input
+    dec_input = tf.keras.layers.Dense(units=1024)(enc_layer)
+
+    # dense layers
+    d1_dec = tf.keras.layers.Dense(units=dense_units, activation="relu")(dec_input)
+    d2_dec = tf.keras.layers.Dense(units=dense_units, activation="relu")(d1_dec)
+
+    # concat output of d1 with d2 to pass into d3
+    c12_dec = tf.keras.layers.Concatenate()([d1_dec, d2_dec])
+    d3_dec = tf.keras.layers.Dense(units=dense_units, activation="relu")(c12_dec)
+
+    # concatenate output of d2 with d3 to pass into d4
+    c23_dec = tf.keras.layers.Concatenate()([d2_dec, d3_dec])
+    d4_dec = tf.keras.layers.Dense(units=dense_units, activation="relu")(c23_dec)
+
+    # concatenate d3 with d4 to pass into d5
+    c34_dec = tf.keras.layers.Concatenate()([d3_dec, d4_dec])
+    d5_dec = tf.keras.layers.Dense(units=dense_units, activation="relu")(c34_dec)
+
+    # concatenate inputs with d5 and pass into output
+    cind5_dec = tf.keras.layers.Concatenate()([dec_input, d5_dec])
+    d6_dec = tf.keras.layers.Dense(units=dense_units, activation="relu")(cind5_dec)
+    d6_dec = tf.keras.layers.Dropout(0.10)(d6_dec)
+
+    # pass d5 into output
+    output = tf.keras.layers.Dense(units=1)(d6_dec)
+
+    # connect the inputs and outputs
+    model = tf.keras.Model(inputs, output)
+
+    model.compile(loss="mse", optimizer=tf.keras.optimizers.Adam(learning_rate=lr))
+
+    return model
