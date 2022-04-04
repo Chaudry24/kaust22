@@ -17,7 +17,7 @@ def load_data():
 
 
 # get the best model
-model = models.model20(lr=1e-6)
+model = models.model20(lr=1e-8)
 
 # get the data
 (train_x, train_y), test = load_data()
@@ -30,7 +30,7 @@ test = tf.convert_to_tensor(test)
 callbacks = [
     tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                      min_delta=0,
-                                     patience=50,
+                                     patience=100,
                                      verbose=0,
                                      mode='min',
                                      baseline=None,
