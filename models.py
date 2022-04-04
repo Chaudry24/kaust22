@@ -839,7 +839,7 @@ def model22(y_true, dense_units=1024, lr=1e-3):
     # train the discriminator
     for i in range(1000):
         print("discriminator training started")
-        x = tf.random.normal((y_true.shape[0], y_true.shape[1]))
+        x = tf.random.normal((y_true.shape[0], 1))
         y_true = tf.convert_to_tensor(y_true)
         dis.fit(x, y_true, epochs=1, verbose=0)
 
