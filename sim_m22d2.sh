@@ -7,6 +7,6 @@
 #SBATCH --gres=gpu:1
 #SBATCH --mem=64GB
 #SBATCH --mail-user=machaudry@uh.edu
-#SBATCH --mail-type=END
+#SBATCH --mail-type=END,FAIL
 
 /project/jun/machaudr/miniconda3.9/envs/myenv/bin/python -u sim_m22d2.py
