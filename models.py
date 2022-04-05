@@ -218,7 +218,7 @@ def model7(dense_units=1024, lr=1e-3):
     d6 = tf.keras.layers.Dense(units=dense_units, activation="relu")(cind5)
 
     # pass d5 into output
-    output = tf.keras.layers.Dense(units=1)(d6)
+    output = tf.keras.layers.Dense(units=1, activity_regularizer=tf.keras.regularizers.l2(1e-3))(d6)
 
     # connect the inputs and outputs
     model = tf.keras.Model(inputs, output)
