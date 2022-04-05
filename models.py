@@ -925,3 +925,97 @@ def model23(dense_units=1024, lr=1e-3):
     model.compile(loss="mse", optimizer=tf.keras.optimizers.Adam(learning_rate=lr))
 
     return model
+
+
+def model24(dense_units=1024, lr=1e-3):
+    """This function returns a compiled NN with skip connections"""
+
+    # input layer
+    inputs = tf.keras.layers.Input(shape=(2))
+
+    # dense layers
+    d1 = tf.keras.layers.Dense(units=dense_units, activation="relu")(inputs)
+    d2 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d1)
+    d3 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d2)
+    d4 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d3)
+
+    # concatenate d3 with d4 to pass into d5
+    c34 = tf.keras.layers.Concatenate()([d3, d4])
+    d5 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c34)
+
+    # pass d5 into output
+    output = tf.keras.layers.Dense(units=1,
+                                   activity_regularizer=tf.keras.regularizers.l1(1e-3))(d5)
+
+    # connect the inputs and outputs
+    model = tf.keras.Model(inputs, output)
+
+    # compile model
+    model.compile(loss=tf.keras.losses.MeanSquaredError(),
+                  optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+                  metrics=[tf.keras.metrics.RootMeanSquaredError()])
+
+    return model
+
+
+def model25(dense_units=1024, lr=1e-3):
+    """This function returns a compiled NN with skip connections"""
+
+    # input layer
+    inputs = tf.keras.layers.Input(shape=(2))
+
+    # dense layers
+    d1 = tf.keras.layers.Dense(units=dense_units, activation="relu")(inputs)
+    d2 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d1)
+    d3 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d2)
+    d4 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d3)
+
+    # concatenate d3 with d4 to pass into d5
+    c34 = tf.keras.layers.Concatenate()([d3, d4])
+    d5 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c34)
+
+    # pass d5 into output
+    output = tf.keras.layers.Dense(units=1,
+                                   activity_regularizer=tf.keras.regularizers.l2(1e-3))(d5)
+
+    # connect the inputs and outputs
+    model = tf.keras.Model(inputs, output)
+
+    # compile model
+    model.compile(loss=tf.keras.losses.MeanSquaredError(),
+                  optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+                  metrics=[tf.keras.metrics.RootMeanSquaredError()])
+
+    return model
+
+
+def model26(dense_units=1024, lr=1e-3):
+    """This function returns a compiled NN with skip connections"""
+
+    # input layer
+    inputs = tf.keras.layers.Input(shape=(2))
+
+    # dense layers
+    d1 = tf.keras.layers.Dense(units=dense_units, activation="relu")(inputs)
+    d2 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d1)
+    d3 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d2)
+    d4 = tf.keras.layers.Dense(units=dense_units, activation="relu")(d3)
+
+    # concatenate d3 with d4 to pass into d5
+    c34 = tf.keras.layers.Concatenate()([d3, d4])
+    d5 = tf.keras.layers.Dense(units=dense_units, activation="relu")(c34)
+
+    # pass d5 into output
+    output = tf.keras.layers.Dense(units=1,
+                                   activity_regularizer=tf.keras.regularizers.l1_l2(l1=1e-3,
+                                                                                    l2=1e-3))(d5)
+
+    # connect the inputs and outputs
+    model = tf.keras.Model(inputs, output)
+
+    # compile model
+    model.compile(loss=tf.keras.losses.MeanSquaredError(),
+                  optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+                  metrics=[tf.keras.metrics.RootMeanSquaredError()])
+
+    return model
