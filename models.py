@@ -739,7 +739,7 @@ def model21(dense_units=1024, lr=1e-3):
     d8 = tf.keras.layers.Dropout(0.05)(d8)
 
     # pass into output
-    output = tf.keras.layers.Dense(units=1)(d8)
+    output = tf.keras.layers.Dense(units=1, activity_regularizer=tf.keras.regularizers.l2(1e-3))(d8)
 
     # connect the inputs and outputs
     model = tf.keras.Model(inputs, output)
