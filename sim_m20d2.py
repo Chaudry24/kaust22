@@ -45,7 +45,7 @@ with open("./data-competition-1a/val_y2.npy", mode="rb") as file:
 
 # fit the model for 1000 epochs
 model.fit(x=train_x, y=train_y, epochs=1000,
-          validation_data=(val_x, val_y),
+          validation_split=0.1,
           callbacks=callbacks)
 
 # get the predictions for test set
