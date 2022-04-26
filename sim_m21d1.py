@@ -1,12 +1,17 @@
 import numpy as np
 import tensorflow as tf
 import models
+from sklearn.preprocessing import PolynomialFeatures
+
+DEGREE = 10
 
 
 def load_data():
     # load train/val data
     with open("./data-competition-1a/train_x1.npy", mode="rb") as file:
         train_x = np.load(file)
+        poly = PolynomialFeatures(degree=DEGREE, include_bias=False)
+        train_x = poly.fit_transform(train_x)
     with open("./data-competition-1a/train_y1.npy", mode="rb") as file:
         train_y = np.load(file)
     with open("./data-competition-1a/test_1.npy", mode="rb") as file:
@@ -16,11 +21,11 @@ def load_data():
     return (train_x, train_y), test
 
 
-# get the best model
-model = models.model21(lr=1e-6)
-
 # get the data
 (train_x, train_y), test = load_data()
+
+# get the best model
+model = models.model21(lr=1e-6, input_shape=train_x.shape[1])
 
 # convert to tensors
 train_x = tf.convert_to_tensor(train_x)
@@ -40,6 +45,8 @@ with open("./results/preds_m21d1.npy", mode="wb") as file:
 # open validation data to get validation error
 with open("./data-competition-1a/val_x1.npy", mode="rb") as file:
     val_x = tf.convert_to_tensor(np.load(file))
+    poly = PolynomialFeatures(degree=DEGREE, include_bias=False)
+    val_x = poly.fit_transform(val_x)
 with open("./data-competition-1a/val_y1.npy", mode="rb") as file:
     val_y = tf.convert_to_tensor(np.load(file))
 
