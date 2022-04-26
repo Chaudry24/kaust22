@@ -703,11 +703,11 @@ def model20(dense_units=1024, lr=1e-3):
     return model
 
 
-def model21(dense_units=512, lr=1e-3):
+def model21(dense_units=512, lr=1e-3, input_shape=None):
     """This function returns a compiled NN with skip connections"""
 
     # input layer
-    inputs = tf.keras.layers.Input(shape=(2))
+    inputs = tf.keras.layers.Input(shape=(input_shape))
 
     # dense layers
     d1 = tf.keras.layers.Dense(units=dense_units, activation="relu")(inputs)
